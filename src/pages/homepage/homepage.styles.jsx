@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 
-export const Form = styled.form`
+export const Homepage = styled.div`
+  width: 90%;
+  max-width: 980px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
 `;

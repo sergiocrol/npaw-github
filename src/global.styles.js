@@ -7,6 +7,9 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     background-color: ${({ theme }) => theme.background.primary};
     transition: all 0.15s linear;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     @media screen and (max-width: 800px) {
       padding: 10px;

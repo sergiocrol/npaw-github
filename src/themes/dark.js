@@ -1,6 +1,7 @@
 export default {
   background: {
-    primary: "#272B34"
+    primary: "#272B34",
+    secondary: "#32353d"
   },
   button: {
     normal: "#FFFFFF",
