@@ -1,26 +1,33 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Switch, Route } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+import { connect } from 'react-redux';
 
-function App() {
+import HomePage from './pages/homepage/homepage.component';
+import UserPage from './pages/userpage/userpage.component';
+import NotFound from './pages/not-found/not-found.component';
+import Header from './components/header/header.component';
+
+import { GlobalStyle } from './global.styles';
+import lightTheme from './themes/light';
+import darkTheme from './themes/dark';
+
+const App = ({ theme }) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme ? darkTheme : lightTheme}>
+      <GlobalStyle />
+      <Header />
+      <Switch>
+        <Route exact path='/' component={HomePage} />
+        <Route path="/user/:userId" component={UserPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </ThemeProvider>
   );
 }
 
-export default App;
+const mapStateToProps = state => ({
+  theme: state.theme.darkMode
+});
+
+export default connect(mapStateToProps)(App);
