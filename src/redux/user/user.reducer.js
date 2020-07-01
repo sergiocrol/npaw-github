@@ -23,7 +23,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isFetching: false,
-        errorMesage: action.payload
+        errorMessage: action.payload
       }
     default:
       return state

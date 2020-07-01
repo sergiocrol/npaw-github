@@ -6,6 +6,7 @@ export const FormContainer = styled.form`
   align-items: center;
   width: 100%;
   max-width: 900px;
+  height: 170px;
 
   input {
     margin-right: 10px;

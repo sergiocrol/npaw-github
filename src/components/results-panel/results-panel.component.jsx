@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
   BarChart,
@@ -14,6 +15,8 @@ import {
 } from 'recharts';
 
 import UserCard from '../user-card/user-card.component';
+import Spinner from '../spinner/spinner.component';
+import WelcomeScreen from '../welcome-screen/welcome-screen.component';
 
 import { ResultsPanelContainer, OverviewUsers, ChartPanel, SelectChart } from './results-panel.styles';
 
@@ -24,6 +27,7 @@ class ResultPanel extends Component {
   }
 
   filterByFollowers = users => {
+    if (users === null) return;
     let data = [];
     users.forEach(user => {
       data.push({ name: user.data.login, followers: user.data.followers })
@@ -74,7 +78,7 @@ class ResultPanel extends Component {
         />
         <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
         <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-        <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`PV ${value}`}</text>
+        <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`Fw ${value}`}</text>
         <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
           {`(Rate ${(percent * 100).toFixed(2)}%)`}
         </text>
@@ -89,54 +93,66 @@ class ResultPanel extends Component {
   };
 
   render() {
-    const { isFetching, users } = this.props;
-    console.log(users.data)
+    const { isFetching, users, error } = this.props;
+    if (error) throw Error;
     const data = this.filterByFollowers(users);
     return (
       <ResultsPanelContainer>
-        <OverviewUsers>
-          {
-            isFetching
-              ? <span>Loading...</span>
-              : users.map(user => <UserCard key={user.data.id} user={user.data} />)
-          }
-        </OverviewUsers>
-        <ChartPanel isBar={this.state.isBar}>
-          <SelectChart isBar={this.state.isBar}>
-            <span onClick={() => this.setState({ isBar: true })}>bar chart</span>
-            <span onClick={() => this.setState({ isBar: false })}>pie chart</span>
-          </SelectChart>
-          <ResponsiveContainer width='90%' height={200}>
-            <BarChart
-              width={400}
-              height={300}
-              data={data}
-              barSize={20}
-            >
-              <XAxis dataKey="name" scale="point" padding={{ left: 10, right: 10 }} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="followers" fill="#8884d8" background={{ fill: '#eee' }} />
-            </BarChart>
-          </ResponsiveContainer>
-          {/* <ResponsiveContainer width='90%' height={200}> */}
-          <PieChart width={400} height={325}>
-            <Pie
-              activeIndex={this.state.activeIndex}
-              activeShape={this.renderActiveShape}
-              data={data}
-              cx={200}
-              cy={200}
-              innerRadius={60}
-              outerRadius={80}
-              fill="#af5c69"
-              dataKey="followers"
-              onMouseEnter={this.onPieEnter}
-            />
-          </PieChart>
-          {/* </ResponsiveContainer> */}
-        </ChartPanel>
+        {
+          users === null && !isFetching
+            ? <WelcomeScreen />
+            : isFetching
+              ? <Spinner />
+              : <>
+                <OverviewUsers>
+                  {
+                    users.map(user =>
+                      <Link key={user.data.id} to={{
+                        pathname: `/user/${user.data.login}`,
+                        state: {
+                          user: user.data
+                        }
+                      }}>
+                        <UserCard user={user.data} />
+                      </Link>)
+                  }
+                </OverviewUsers>
+                <ChartPanel isBar={this.state.isBar}>
+                  <SelectChart isBar={this.state.isBar}>
+                    <span onClick={() => this.setState({ isBar: true })}>bar chart</span>
+                    <span onClick={() => this.setState({ isBar: false })}>pie chart</span>
+                  </SelectChart>
+                  <ResponsiveContainer width='90%' height={200}>
+                    <BarChart
+                      width={400}
+                      height={300}
+                      data={data}
+                      barSize={20}
+                    >
+                      <XAxis dataKey="name" scale="point" padding={{ left: 10, right: 10 }} />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="followers" fill="#8884d8" background={{ fill: '#eee' }} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <PieChart width={400} height={325}>
+                    <Pie
+                      activeIndex={this.state.activeIndex}
+                      activeShape={this.renderActiveShape}
+                      data={data}
+                      cx={200}
+                      cy={200}
+                      innerRadius={60}
+                      outerRadius={80}
+                      fill="#af5c69"
+                      dataKey="followers"
+                      onMouseEnter={this.onPieEnter}
+                    />
+                  </PieChart>
+                </ChartPanel>
+              </>
+        }
       </ResultsPanelContainer >
     );
   }
@@ -144,7 +160,8 @@ class ResultPanel extends Component {
 
 const mapStateToProps = state => ({
   users: state.user.users,
-  isFetching: state.user.isFetching
+  isFetching: state.user.isFetching,
+  error: state.user.errorMessage
 });
 
 export default connect(mapStateToProps)(ResultPanel);

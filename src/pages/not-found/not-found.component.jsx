@@ -1,8 +1,15 @@
 import React from 'react';
 
+import NotFoundImage from '../../assets/not-found.png';
+
+import { NotFoundContainer } from './not-found.styles';
+
 const NotFound = () => {
   return (
-    <div>404 - Not Found</div>
+    <NotFoundContainer>
+      <img src={NotFoundImage} alt='Not found' />
+      <span>404 - page not found</span>
+    </NotFoundContainer>
   )
 };
 
