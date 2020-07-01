@@ -54,10 +54,14 @@ npm start
 
 ## Libraries
 
-- **react:** v16.9.0
+- **react:** v16.13.1
 - **react-router-dom:** Navigation between different components
 - **axios:**  Handle Ajax Requests
-- **nose-sass:** Compile scss to css
+- **styled-components:** Css-in-JS
+- **redux/reac-redux:** State management
+- **recharts:** Charts Library
+- **redux-thunk:** Middleware for Async ops
+- **redux-persist:** For handle the persistation in the navigation
 
 ## Git
 
